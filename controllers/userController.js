@@ -8,17 +8,14 @@ const createToken = (id) =>
 // Yeni kullanıcı kaydı
 export const registerUser = async (req, res) => {
   const { username, email, password } = req.body;
-
   // Zorunlu alan kontrolü
   if (!username || !email || !password) {
     return res.status(400).json({ message: "All fields are required" });
   }
-
   try {
     // Yeni user instance oluştur
     const user = new User({ username, email, password });
     await user.save();
-
     return res.status(201).json({
       id: user._id,
       username: user.username,
@@ -29,6 +26,7 @@ export const registerUser = async (req, res) => {
     // Duplicate key hatası (kullanıcı adı veya email mevcut)
     if (error.code === 11000) {
       const duplicateField = Object.keys(error.keyValue)[0];
+
       return res
         .status(400)
         .json({ message: `${duplicateField} already exists` });
